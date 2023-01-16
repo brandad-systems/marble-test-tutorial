@@ -1,5 +1,5 @@
 import {RunHelpers, TestScheduler} from "rxjs/testing";
-import {DemoService} from "./demo.service";
+import {DemoService, MyFancyObject, MyOtherFancyObject} from "./demo.service";
 import {Frame, logFrames} from "../shared/helper.spec";
 import {Observable} from "rxjs";
 
@@ -14,14 +14,15 @@ describe('DemoService', () => {
     // boilerplate code that you always need for marble testing if you want to use the TestScheduler.run()::
     testScheduler = new TestScheduler(function (actual: Frame[], expected: Frame[]) {
       // helper function for ease of debugging:
-      logFrames('actual', actual);
-      logFrames('expected', expected);
+      // uncomment, when trying to solve Task 2 when you don't understand the log output from the test of Task 2
+      //logFrames('actual', actual);
+      //logFrames('expected', expected);
       // asserting the two objects are equal - required
       expect(actual).toEqual(expected); // die Ausgabe hier bei Fehlern ist etwas verwirrend
     });
   });
-
-  it('Task1: simple case WITHOUT using TestScheduler of Observable', function (done) {
+// Task1 simple case WITHOUT using TestScheduler of Observable, complete the test so that it actually tests the DemoService.funcToBeTested()
+  it('should delay the result and multiply the results by 3; test NOT yet using the TestScheduler Task1: ', function (done) {
     //arrange
     let start = Date.now();
     let timeTofirstValue = 10;
@@ -56,8 +57,9 @@ describe('DemoService', () => {
     }, 300);
   });
 
-
-  it('Task 2: simplest case to get familiar with the syntax : fix the problem', () => {
+//Task 2: simple case to get familiar with the syntax : fix the problem so that test gets green;
+// note comment in line 17 above after running the test once
+  it('should delay the result and multiply the results by 3; test using the TestScheduler', () => {
     testScheduler.run((helpers: RunHelpers) => {
       const {cold, expectObservable} = helpers;
       const coldObs$ = cold('         -a--b--|',{a:1,b:2});
@@ -68,6 +70,37 @@ describe('DemoService', () => {
       let obsResult$: Observable<number> = myService.funcToBeTested(coldObs$,10);
       // assert
       expectObservable(obsResult$).toBe(wrongExpectedPattern,expectedValues);
+    });
+  });
+  //Task 3: non-trivial case : fix the problem so that test gets green
+  it('should delay the result map and filter the stream of Objets from the input Observable;' +
+    ' test using the TestScheduler', () => {
+    testScheduler.run((helpers: RunHelpers) => {
+      const {cold, expectObservable} = helpers;
+      let inputObj1 =  {
+        myNumber: 1,
+        myName: " mystring "
+      } as MyFancyObject;
+      let inputObj2 =  {
+        myNumber: 2,
+        myName: " mystring2 "
+      } as MyFancyObject;
+      let outputObj1 =  {
+        myOtherNumber: 2,
+        anotherName: " mystring3 "
+      } as MyOtherFancyObject;
+      let outputObj2 =  {
+        myOtherNumber: 4,
+        anotherName: " mystring4 "
+      } as MyOtherFancyObject;
+      const coldObs$ = cold('    -a--b--|',{a:inputObj1,b:inputObj2});
+      const expectedPattern = '-----------c--d--|)'
+      const expectedValues = {c:outputObj1,d:outputObj2};
+
+      let obsResult$: Observable<MyOtherFancyObject> = myService.func4MyFancyObject(coldObs$,10);
+      // assert
+      expectObservable(obsResult$).toBe(expectedPattern,expectedValues);
+
     });
   });
 });
