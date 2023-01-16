@@ -61,6 +61,7 @@ describe('DemoService', () => {
 // note comment in line 17 above after running the test once
   it('should delay the result and multiply the results by 3; test using the TestScheduler', () => {
     testScheduler.run((helpers: RunHelpers) => {
+      //arrange
       const {cold, expectObservable} = helpers;
       const coldObs$ = cold('         -a--b--|',{a:1,b:2});
       const wrongExpectedPattern = '-----------c--d--|';//naive guess, however: delay(x) in a pipe does NOT delay the complete!!!
@@ -76,6 +77,7 @@ describe('DemoService', () => {
   it('should delay the result map and filter the stream of Objets from the input Observable;' +
     ' test using the TestScheduler', () => {
     testScheduler.run((helpers: RunHelpers) => {
+      //arrange
       const {cold, expectObservable} = helpers;
       let inputObj1 =  {
         myNumber: 1,
@@ -96,7 +98,7 @@ describe('DemoService', () => {
       const coldObs$ = cold('    -a--b--|',{a:inputObj1,b:inputObj2});
       const expectedPattern = '-----------c--d--|)'
       const expectedValues = {c:outputObj1,d:outputObj2};
-
+      //act
       let obsResult$: Observable<MyOtherFancyObject> = myService.func4MyFancyObject(coldObs$,10);
       // assert
       expectObservable(obsResult$).toBe(expectedPattern,expectedValues);
