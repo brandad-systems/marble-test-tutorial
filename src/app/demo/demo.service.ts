@@ -23,7 +23,9 @@ export class DemoService {
   }
 
   public func4MyFancyObject(obs: Observable<MyFancyObject>, del: number): Observable<MyOtherFancyObject> {
-    return obs.pipe(delay(del), map(obj => {
+    return obs.pipe(
+      delay(del),
+      map(obj => {
         return {
           myOtherNumber: obj.myNumber + 1,
           anotherName: obj.myName + " is nice"
